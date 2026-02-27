@@ -1,0 +1,113 @@
+### robot_localization EKF 配置文件 (高级传感器版) ###
+
+ekf_filter_node:
+  ros__parameters:
+    # ---------------------------------------------------------
+    # 1. 系统核心
+    # ---------------------------------------------------------
+    frequency: 30.0                
+    sensor_timeout: 0.15
+    two_d_mode: true               # 2D平面模式，忽略 Z, Roll, Pitch
+    publish_acceleration: false
+    publish_tf: true               
+    
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_link
+    world_frame: odom
+
+    predict_to_current_time: true
+    history_length: 1.0
+
+    # ---------------------------------------------------------
+    # 2. 轮式里程计 (/wheel/odom)
+    # ---------------------------------------------------------
+    odom0: /wheel/odom
+    
+    # 策略：
+    # - 信任 vx, vy：轮计测线速度非常直观。
+    # - 禁用 vyaw：[核心改动] 既然你 IMU 的四元数和角速度都很准，
+    #   就把转向权完全交给 IMU，防止轮子打滑时干扰方向。
+    odom0_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,   # 信任线速度 vx, vy
+                   false, false, false,   # [改动] 关掉 vyaw，避免与 IMU 冲突
+                   false, false, false]
+    
+    odom0_differential: false
+    odom0_queue_size: 10
+
+    # ---------------------------------------------------------
+    # 3. IMU (/imu/odom)
+    # ---------------------------------------------------------
+    imu0: /imu/odom
+    
+    # 策略：
+    # - 信任 Yaw (四元数)：利用 1e-5 的高精度协方差锁死航向。
+    # - 信任 vYaw (角速度)：利用 1e-4 的协方差提供动态响应。
+    # - 禁用 Accel：彻底物理屏蔽自震影响。
+    imu0_config: [false, false, false,
+                  false, false, true,      # 信任绝对姿态 Yaw
+                  false, false, false,
+                  false, false, true,      # 信任角速度 vYaw
+                  false, false, false]     # 禁用加速度，防震
+
+    # [关键配置] 
+    # 因为我们要用 IMU 提供的绝对四元数来“锁死”方向。
+    imu0_differential: false 
+    # [关键配置]
+    # 这样每次 EKF 启动时，会将 IMU 当前的偏航角设为 0。
+    # 哪怕你的 IMU 上电是指向北方的，EKF 也会把它对齐到机器人的正前方。
+    imu0_relative: true  
+    imu0_queue_size: 10
+    # 既然没开启加速度融合，这一项 true/false 影响不大，建议保持 true
+    imu0_remove_gravitational_acceleration: true
+
+    # ---------------------------------------------------------
+    # 4. 过程噪声协方差 (Process Noise Covariance) - 进阶优化
+    # ---------------------------------------------------------
+    # 如果你发现即便设了协方差，机器人还是飘，可以适当减小对应位置的值。
+    # 通常默认值即可。
+
+    # ---------------------------------------------------------
+    # 4. 动态协方差 (解决震动干扰的数学手段)
+    # ---------------------------------------------------------
+    # 如果你发现开启 IMU 后车子还在微抖，可以尝试手动增大过程噪声
+    # process_noise_covariance: [...]
+
+    # ---------------------------------------------------------
+    # 4. 数据源 3: 视觉里程计 (Visual Odometry) - RTAB-Map
+    # ---------------------------------------------------------
+    odom1: /vision/odom
+    odom1_config: [false, false, false,
+                   false, false, false,
+                   true,  true,  false,   # 信任 vx, vy
+                   false, false, true,    # 信任 vyaw
+                   false, false, false]
+
+    # [必须] 视觉里程计通常需要差分模式来处理跳变或重置
+    odom1_differential: false
+    odom1_relative: true
+    odom1_queue_size: 30
+    # [异常剔除] 防止画面中有人走过导致视觉里程计瞬间乱跳
+    odom1_twist_rejection_threshold: 2.0
+
+    # ---------------------------------------------------------
+    # 5. 数据源 4: 激光里程计 (Lidar Odometry) - rf2o_laser_odometry
+    # ---------------------------------------------------------
+    odom2: /lidar/odom
+    odom2_config: [true,  true,  false, # X, Y, Z
+                   false, false, true,  # roll, pitch, yaw
+                   false, false, false, # vx, vy, vz
+                   false, false, false, # vroll, vpitch, vyaw
+                   false, false, false] # ax, ay, az
+    odom2_differential: false
+    odom2_relative: true
+
+    # ---------------------------------------------------------
+    # 6. 初始协方差 (可选，使用默认值通常即可)
+    # ---------------------------------------------------------
+    # process_noise_covariance: [...] 
+    # initial_estimate_covariance: [...]
+
+

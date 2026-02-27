@@ -1,0 +1,138 @@
+# --------------------------------------------------------------------
+# RTAB-Map 视觉里程计节点配置
+# --------------------------------------------------------------------
+visual_odometry:
+  ros__parameters:
+    # --- 基础话题与坐标系 ---
+    frame_id: "base_link"          # 机器人底盘坐标系
+    odom_frame_id: "odom"          # 里程计坐标系
+    publish_tf: false              # [绝对关键] 关闭 TF 发布，防止与 EKF 冲突！
+    wait_for_transform: 0.15        # 等待 TF 时间，网络延迟大时设大一点
+    approx_sync: true              # [关键] 允许 RGB 和 深度图 时间戳不完全同步
+    queue_size: 15
+    subscribe_rgbd: false          # 我们直接订阅 分开接收 3 个独立的标准话题
+
+    # --- 核心算法策略 (针对树莓派带宽优化) ---
+    # 0=Frame-to-Map (精度高), 1=Frame-to-Frame (速度快)
+    # 选 1，因为 320x240 分辨率下 F2F 更流畅，CPU 占用更低
+    "Odom/Strategy": "1"
+    
+    # 强制 2D 模式 (只算 x, y, yaw)，避免 Z 轴乱飘
+    "Reg/Force3DoF": "true"
+
+    # --- 特征点调优 (针对 320x240 低分辨率) ---
+    "Vis/MinInliers": "10"         # 最少特征点数，设低点防止丢失
+    "Vis/MaxFeatures": "400"       # 最大特征点数，限制 CPU 占用
+    "GFTT/MinDistance": "5"        # 特征点最小间距
+    
+    # --- 协方差设置 (告诉 EKF 我们有多准) ---
+    # 设为 0.001 (1e-3) 左右，表示信任度适中
+    "Odom/VarianceLinear": "0.0005" 
+    "Odom/VarianceAngular": "0.001"
+    
+    # --- 自动恢复 ---
+    "Odom/ResetCountdown": "1"     # 视觉跟丢后，自动重置里程计
+
+    "Odom/Holonomic": "true"       # 考虑横移
+
+# --------------------------------------------------------------------
+# [新增] RTAB-Map SLAM 主节点配置
+# --------------------------------------------------------------------
+rtabmap_slam:
+  ros__parameters:
+    # --- 基础配置 ---
+    frame_id: "base_link"
+    map_frame_id: "map"
+    odom_frame_id: "odom"          # 必须和 EKF 的 odom_frame 一致
+    publish_tf: true               # [核心] SLAM 节点必须发布 map -> odom 的变换
+    wait_for_transform: 0.2
+    
+    # --- 订阅设置 ---
+    subscribe_depth: true          # 订阅 RGB + Depth
+    subscribe_rgbd: false          # 分开订阅，同 VO
+    subscribe_scan: false          # 如果你有激光雷达，这里改 true
+    approx_sync: true              # [关键] 允许时间戳抖动
+    approx_sync_max_interval: 0.03 # [新增] 把最大容忍时间从默认的 0.02 改为 0.05 (50ms)
+    queue_size: 20                 # 设大点，防止建图时丢帧
+
+    # --- 建图与内存管理 ---
+    "Mem/IncrementalMemory": "true" # true=建图模式; false=纯定位模式
+    "Mem/InitWMWithAllNodes": "true" # 启动时加载已有地图
+    
+    # [性能优化] 针对虚拟机和网络延迟
+    "Rtabmap/TimeThr": "700"       # 每帧处理最大耗时(ms)。超过就不处理，防止卡死
+    "Rtabmap/DetectionRate": "1"   # 建图频率 1Hz。320x240没必要太快，省带宽
+
+    # --- 闭环检测 (Loop Closure) ---
+    "Kp/MaxFeatures": "400"        # 和 VO 保持一致
+    "Vis/MinInliers": "15"         # 闭环确认的最低特征点数
+    "RGBD/OptimizeFromGraphEnd": "false" # 优化全图，不仅是末端
+    "RGBD/LoopClosureReextractFeatures": "true" # 闭环时重新提取特征，提高准确率
+
+    # --- 栅格地图 (Grid Map) ---
+    # 因为你是 Astra Pro (RGB-D)，我们要用深度图生成 2D 障碍物地图
+    "Grid/FromDepth": "true"        # 用深度图生成栅格地图
+    "Grid/MaxGroundHeight": "0.08"   # 离地 10cm 以下算地面
+    "Grid/MaxObstacleHeight": "1.5" # 1.5米以上不算障碍物
+    "Grid/ClusterRadius": "0.1"      # 聚类半径，把细碎的障碍物连成线
+
+    "Grid/RangeMax": "4"          # 深度图有效探测距离 (Astra 有效大概 4-5米)
+    "Grid/NoiseFilteringRadius": "0.05" # 过滤地图噪点
+    "Grid/NoiseFilteringMinNeighbors": "2"
+
+    # --- 运动更新阈值 (动了才更新地图) ---
+    "RGBD/LinearUpdate": "0.05"    # 移动 5cm 更新一次
+    "RGBD/AngularUpdate": "0.05"   # 旋转 0.05rad 更新一次
+
+# --------------------------------------------------------------------
+    # [进阶] 地图清理与优化 (针对 Astra 低分辨率优化)
+    # --------------------------------------------------------------------
+    
+    # [清除幽灵] 必须开启！否则移动物体会留下永久痕迹
+    "Grid/RayTracing": "true"
+    
+    # [精修] 尝试修正节点间的微小误差 (如果 CPU 占用过高导致卡顿，请关掉它)
+    "RGBD/NeighborLinkRefining": "false" 
+    
+    # [补充建议] 填充未知的空间，让地图看起来更完整
+    "Grid/3D": "false"                      # 2D 导航通常不需要 3D 栅格
+
+
+    # [优化策略] 选择 g2o (1) 或 GTSAM (2)。推荐 g2o，也是默认值，但写出来更稳妥
+    "Optimizer/Strategy": "1"
+
+    # ================================================================
+    # [备用区域] 3D 稠密点云重建参数 (默认注释，需要时开启)
+    # 开启后会发布 /rtabmap/cloud_map，网络和 CPU 负载会显著增加
+    # ================================================================
+
+    # --- 1. 采样与性能平衡 (树莓派核心保命参数) ---
+    # 图片降采样倍数。
+    # 默认 4 (即 4x4=16 个像素出一个点)。
+    # 想要更清晰改成 2，树莓派卡死改成 8。
+    # "Cloud/Decimation": "4"
+
+    # 体素滤波大小 (单位：米)。
+    # 决定点云有多“密”。0.05 代表 5cm 内只留一个点。
+    # 如果觉得 3D 墙壁太稀疏，可以改成 0.02 (2cm)，但带宽消耗会翻倍。
+    # "Cloud/VoxelSize": "0.05"
+
+    # --- 2. 视野与去噪 (针对 Astra Pro 深度相机特性) ---
+    # 最大深度截断。
+    # Astra Pro 超过 3.5米 数据非常飘，甚至会穿墙，建议截断。
+    # "Cloud/MaxDepth": "3.5"
+
+    # 最小深度截断。
+    # 过滤掉相机贴脸处的盲区噪点。
+    # "Cloud/MinDepth": "0.5"
+
+    # --- 3. 噪点清洗 (防止空中出现“幽灵点”) ---
+    # 搜索半径。在这个半径内找不到邻居的点会被认为是噪点删掉。
+    # "Cloud/NoiseFilteringRadius": "0.1"
+
+    # 最小邻居数。配合上面使用，少于 5 个邻居就删掉。
+    # "Cloud/NoiseFilteringMinNeighbors": "5"
+
+    # --- 4. 颜色与法线 (视觉效果) ---
+    # 是否重新计算法线。开启后在 RViz 里光照效果会更好，但多耗一点 CPU。
+    # "Cloud/FrustumCulling": "true"
