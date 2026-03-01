@@ -80,8 +80,12 @@ def generate_launch_description():
         executable='rgbd_odometry',
         name='visual_odometry',
         output='screen',
-        parameters=[rtabmap_config_path],
-            
+        parameters=[
+            rtabmap_config_path,  # 原有配置文件
+            # 新增：解决RGB/深度时间戳同步警告的参数
+            {'approx_sync_max_interval': 0.03},  # 放宽同步阈值到30毫秒（推荐新手先用这个）
+            # {'approx_sync': False}  # 备选：严格要求时间戳完全一致（如果相机支持硬件同步再用）
+        ],
         # [核心] 话题重映射
         remappings=[
             # 输入 (Input)
