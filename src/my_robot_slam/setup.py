@@ -30,7 +30,6 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'odom_remapper = my_robot_slam.odom_remapper:main',
         ],
     },
 )

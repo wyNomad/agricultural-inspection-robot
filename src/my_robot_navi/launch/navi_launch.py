@@ -12,7 +12,7 @@ def generate_launch_description():
     pkg_navi = get_package_share_directory('my_robot_navi')
     pkg_nav2 = get_package_share_directory('nav2_bringup')
     # 指向你包内的数据库备份 (确保这个路径下真的有文件！)
-    database_path = '/home/wyi/ros2_ws/src/my_robot_navi/maps/rtabmap.db'
+    database_path = '/home/wyi/ros2_ws/src/my_robot_navi/maps/rtabmap1.db'
     # Nav2 参数文件路径
     nav2_params_file = os.path.join(pkg_navi, 'config', 'nav2_params.yaml')
     
@@ -74,9 +74,9 @@ def generate_launch_description():
     )
 
     # 切换模式时，手动在这里修改：
-    # rtabmap_args_str = common_params + mapping_params       # 建图用这行
-    rtabmap_args_str = common_params + localization_params  # 定位用这行
-    mode_is_localization = 'true'    # 建图就写false,定位就写true
+    rtabmap_args_str = common_params + mapping_params       # 建图用这行
+    # rtabmap_args_str = common_params + localization_params  # 定位用这行
+    mode_is_localization = 'false'    # 建图就写false,定位就写true
 
     # 3. 包含官方启动文件
     rtabmap_launch = IncludeLaunchDescription(
@@ -147,6 +147,6 @@ def generate_launch_description():
 
     # 4. 返回 LaunchDescription
     return LaunchDescription([
-        nav2_launch_group,
+        # nav2_launch_group,
         rtabmap_launch,
     ])

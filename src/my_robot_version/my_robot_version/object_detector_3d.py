@@ -207,7 +207,7 @@ class ObjectDetector3D(Node):
                         self.get_logger().info(f"🔄 目标 ID:{self.locked_id} 重连成功！")
                         found_it = True
                         break
-                
+
                 if not found_it:
                     if current_ros_time - self.last_seen_time > self.lost_timeout:
                         self.state = STATUS_SEARCHING
