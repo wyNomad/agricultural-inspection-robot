@@ -74,11 +74,11 @@ def generate_launch_description():
             "wait_for_transform": 0.3,           # 等待 TF 变换的超时时间（秒）
             
             # # ===== 数据库 =====
-            # "database_path": "~/rtabmap.db",     # 地图数据库保存路径
+            "database_path": "/home/wyi/ros2_ws/src/my_robot_navi/maps/rtabmap.db",     # 地图数据库保存路径
             
             # # ===== 建图模式 =====
             "Mem/IncrementalMemory": "True",       # 增量式建图
-            "Mem/InitWMWithAllNodes": "False",     # 不一开始加载所有节点
+            "Mem/InitWMWithAllNodes": "False",     
             
             # # ===== 视觉特征参数 =====
             "Vis/MinInliers": "20",                 # 视觉里程计最小内点数

@@ -6,6 +6,9 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.actions import GroupAction
 from launch_ros.actions import SetRemap
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
 
 def generate_launch_description():
     # 1. 获取路径
@@ -118,6 +121,74 @@ def generate_launch_description():
         }.items()
     )
 
+    rtabmap_node = Node(
+        package='rtabmap_slam',
+        executable='rtabmap',
+        name='rtabmap',
+        output='screen',
+        parameters=[{
+            # ===== 基础坐标系 =====
+            "frame_id": "base_link",
+            "odom_frame_id": "odom",
+
+            # ===== 传感器订阅 =====
+            "subscribe_rgbd": False,          # 不使用组合话题
+            "subscribe_depth": True,
+            "subscribe_rgb": True,
+            "subscribe_scan": True,
+            "scan_topic": "/scan",
+
+            # ===== 时间同步 =====
+            "approx_sync": True,
+            "sync_queue_size": 80,
+            "topic_queue_size": 20,
+            "approx_sync_max_interval": 0.035,
+
+            # ===== TF 等待 =====
+            "wait_for_transform": 0.3,
+
+            "database_path": "/home/wyi/ros2_ws/src/my_robot_navi/maps/rtabmap.db",     # 地图数据库保存路径
+
+            # ===== 定位模式关键参数 =====
+            "Mem/IncrementalMemory": False,        # 不再增加新地图节点
+            "RGBD/SavedLocalizationData": True,    # 使用已有地图，只定位，不建图
+
+            # ===== ICP 点云配准（可选增强定位稳定性） =====
+            "Reg/Strategy": 2,                     # 激光 + 视觉配准
+            "Reg/Force3DoF": True,                 # 强制平面运动
+            "Icp/VoxelSize": 0.05,
+            "Icp/MaxCorrespondenceDistance": 0.1,
+            "Icp/CorrespondenceRatio": 0.2,
+
+            # ===== 视觉优化参数（可选） =====
+            "RGBD/NeighborLinkRefining": True,
+            "RGBD/OptimizeFromGraphEnd": True,
+            "RGBD/ProximityBySpace": True,
+            "Rtabmap/DetectionRate": 0.8,
+
+            # ===== 2D 栅格地图（激光雷达辅助定位） =====
+            "Grid/FromDepth": False,
+            "Grid/RayTracing": True,
+            "Grid/MaxGroundHeight": 0.15,
+            "Grid/RangeMax": 5.0,
+            "Grid/NoiseFilteringRadius": 0.05,
+            "Grid/NoiseFilteringMinNeighbors": 8,
+        }],
+        remappings=[
+            # 使用滤波后的 EKF 里程计
+            ('odom', '/odometry/filtered'),
+            # RGBD 话题
+            ('rgb/image', '/camera/color/uncompressed'),
+            ('depth/image', '/camera/depth/image_raw'),
+            ('rgb/camera_info', '/camera/color/camera_info'),
+            # 激光
+            ('scan', '/scan'),
+        ],
+        # 定位模式不需要清空数据库，保留已有地图
+        # arguments=['--delete_db_on_start']    # 建图模式用，定位模式应注释掉
+    )
+
+
 
     nav2_launch_group = GroupAction(
         actions=[
@@ -147,6 +218,7 @@ def generate_launch_description():
 
     # 4. 返回 LaunchDescription
     return LaunchDescription([
+        rtabmap_node,
         # nav2_launch_group,
-        rtabmap_launch,
+        # rtabmap_launch,
     ])
