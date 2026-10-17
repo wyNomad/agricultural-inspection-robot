@@ -24,8 +24,8 @@
 需要 Linux、ROS 2、colcon 和 rosdep。下面以 ROS 2 Humble 的安装路径为例；完整环境版本与硬件组合尚未验证。
 
 ```bash
-git clone https://github.com/wyNomad/vm_ros2_ws.git
-cd vm_ros2_ws
+git clone https://github.com/wyNomad/agricultural-inspection-robot.git
+cd agricultural-inspection-robot
 source /opt/ros/humble/setup.bash
 rosdep install --from-paths src --ignore-src --rosdistro "$ROS_DISTRO" -y
 colcon build --symlink-install
