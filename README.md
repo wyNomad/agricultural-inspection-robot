@@ -57,7 +57,7 @@
 | 仓库 | 保留内容 |
 | --- | --- |
 | 当前仓库 | 农业巡检机器人早期工程结构及模块代码 |
-| [`ros2`](https://github.com/wyNomad/ros2) | 同一项目部署在香橙派主控上的部分 ROS 2 包，中期成果 |
+| [`agricultural-inspection-orangepi`](https://github.com/wyNomad/agricultural-inspection-orangepi) | 同一项目部署在香橙派主控上的部分 ROS 2 包，中期成果 |
 
 上述仓库属于同一项目的不同阶段，最终版本暂未公开。
 
