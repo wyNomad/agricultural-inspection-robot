@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260" role="img" aria-labelledby="title desc">
+  <title id="title">Agricultural Inspection Robot</title>
+  <desc id="desc">农业巡检机器人。ROS 2, RGB-D perception, mapping and motion planning. Early development snapshot.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1d26"/><stop offset=".6" stop-color="#132d34"/><stop offset="1" stop-color="#1c403c"/></linearGradient>
+    <linearGradient id="accent"><stop stop-color="#4ade80"/><stop offset="1" stop-color="#38bdf8"/></linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#a7f3d0" stroke-opacity=".055"/></pattern>
+  </defs>
+  <rect width="1200" height="260" rx="16" fill="url(#bg)"/>
+  <rect width="1200" height="260" rx="16" fill="url(#grid)"/>
+  <g fill="none" stroke="#6ee7b7" stroke-opacity=".15" stroke-width="1.3"><path d="M860 260L1120 0M920 260L1160 0M980 260L1200 0M1040 260L1240 0"/><path d="M880 74H1170M852 112H1170M824 150H1170M796 188H1170M768 226H1170"/></g>
+  <rect x="48" y="42" width="4" height="135" rx="2" fill="url(#accent)"/>
+  <g font-family="Segoe UI, Ubuntu, Noto Sans CJK SC, Microsoft YaHei, sans-serif">
+    <text x="76" y="60" fill="#86efac" font-family="monospace" font-size="12" letter-spacing="3">ROBOTICS / FIELD INSPECTION</text>
+    <text x="74" y="117" fill="#f0fdf4" font-size="43" font-weight="700">Agricultural Inspection Robot</text>
+    <text x="76" y="154" fill="#c4ddd4" font-size="21" letter-spacing="2">农业巡检机器人</text>
+    <text x="76" y="203" fill="#99c7b6" font-size="13" letter-spacing="1.5">ROS 2 / RGB-D PERCEPTION / MAPPING / MOTION PLANNING</text>
+  </g>
+  <path d="M76 225H1125" stroke="url(#accent)" stroke-opacity=".35"/>
+  <circle cx="1123" cy="44" r="4" fill="#4ade80"/>
+  <text x="1109" y="48" text-anchor="end" fill="#7fa99a" font-family="monospace" font-size="10" letter-spacing="1.2">EARLY SOURCE SNAPSHOT</text>
+</svg>
