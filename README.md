@@ -14,9 +14,9 @@
 
 本项目围绕农业巡检场景开展机器人系统开发，将机器人描述、环境感知、跟随控制与运动规划等模块组织在 ROS 2 工作空间中。
 
-项目已经完成。当前仓库保留开发早期提交的源码；完整版本曾保存在板卡中，目前尚未找回，后续找到后会继续更新。本仓库作为该独立项目的代码与资料留存入口。
+项目已完成。本仓库已上传早期工程结构及模块代码，最终版本暂未公开。
 
-*A ROS 2 agricultural inspection robot project. This repository preserves an early development snapshot; the complete implementation will be added if recovered.*
+*A ROS 2 agricultural inspection robot project. This repository contains the early project structure and module implementations. The final version is not publicly available.*
 
 ## 模块目录
 
@@ -40,7 +40,7 @@
 - **建图与定位**：保留 RTAB-Map、RGB-D / ICP 里程计与 EKF 的启动和配置，以及 Nav2 相关配置。
 - **运动规划**：通过机器人描述、MoveIt 配置和控制器配置组织机械臂规划入口。
 
-上述内容可在对应模块源码中查阅；完整系统的最终配置与功能以未来补充的完整版本和项目资料为准。
+上述实现要点均可在当前公开的早期源码中查阅。
 
 ## 技术组成
 
@@ -63,9 +63,8 @@
 | 项目 | 状态 |
 | --- | --- |
 | 农业巡检机器人项目 | 已完成 |
-| 当前公开代码 | 开发早期提交的 ROS 2 工作空间 |
-| 完整项目代码 | 暂未找回，后续找到后补充 |
-| 后续更新 | 补充完整源码、对应环境与可保留的项目资料 |
+| 当前公开代码 | 早期工程结构及模块代码 |
+| 最终版本 | 暂未公开 |
 
 历史提交保留在仓库中，用于追溯早期实现。
 
