@@ -1,0 +1,30 @@
+{
+  "python": [
+    ".github/scripts/check_repository.py",
+    "src/imu_odometry",
+    "src/my_arm_description",
+    "src/my_arm_moveit_config",
+    "src/my_robot_description",
+    "src/my_robot_follow",
+    "src/my_robot_navi",
+    "src/my_robot_slam",
+    "src/my_robot_version"
+  ],
+  "xml": [
+    "assets",
+    "src/imu_odometry/package.xml",
+    "src/my_arm_description/package.xml",
+    "src/my_arm_moveit_config/package.xml",
+    "src/my_robot_description/package.xml",
+    "src/my_robot_follow/package.xml",
+    "src/my_robot_navi/package.xml",
+    "src/my_robot_slam/package.xml",
+    "src/my_robot_version/package.xml"
+  ],
+  "markdown": [
+    "README.md",
+    "docs",
+    "CONTRIBUTING.md",
+    ".github/PULL_REQUEST_TEMPLATE.md"
+  ]
+}

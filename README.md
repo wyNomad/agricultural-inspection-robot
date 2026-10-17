@@ -10,6 +10,8 @@
 
 </div>
 
+[![Repository checks](https://github.com/wyNomad/agricultural-inspection-robot/actions/workflows/repository-checks.yml/badge.svg)](https://github.com/wyNomad/agricultural-inspection-robot/actions/workflows/repository-checks.yml)
+
 ## 项目介绍
 
 本项目围绕农业巡检场景开展机器人系统开发，将机器人描述、环境感知、跟随控制与运动规划等模块组织在 ROS 2 工作空间中。系统采用香橙派与 Jetson Nano 双主控。
@@ -80,3 +82,7 @@
 ## 第三方组件与许可证
 
 相机驱动、模型及其他第三方资源遵循各自的许可证与授权说明，详见对应子目录。本仓库根目录暂未声明覆盖全部组件的统一许可证。
+
+## 维护与协作
+
+问题反馈、修改流程和检查范围见 [维护指南](CONTRIBUTING.md)。提交前可运行本地静态检查；硬件、训练或部署结果需另外记录验证环境。

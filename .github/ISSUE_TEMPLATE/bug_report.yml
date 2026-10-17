@@ -1,0 +1,31 @@
+name: 运行与配置问题
+description: 报告工程快照中的构建、启动、配置或接口问题
+title: '[Bug] '
+body:
+- type: input
+  id: revision
+  attributes:
+    label: 分支与提交
+  validations:
+    required: true
+- type: textarea
+  id: environment
+  attributes:
+    label: 运行环境
+    description: 系统、ROS 2 发行版、主机或板卡、硬件与 SDK/依赖版本。
+  validations:
+    required: true
+- type: textarea
+  id: reproduce
+  attributes:
+    label: 复现步骤与配置
+    description: 构建/启动命令、涉及的包、参数、话题与坐标系。
+  validations:
+    required: true
+- type: textarea
+  id: result
+  attributes:
+    label: 预期结果与实际结果
+    description: 附必要日志，先移除凭据和个人信息。
+  validations:
+    required: true

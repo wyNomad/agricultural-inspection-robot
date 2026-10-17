@@ -1,0 +1,17 @@
+name: 文档与资料问题
+description: 反馈文档路径、环境说明或复现步骤的问题
+title: '[Docs] '
+body:
+- type: input
+  id: location
+  attributes:
+    label: 文档或代码位置
+  validations:
+    required: true
+- type: textarea
+  id: details
+  attributes:
+    label: 问题与建议
+    description: 说明所用版本、现有描述和建议补充的依据。
+  validations:
+    required: true

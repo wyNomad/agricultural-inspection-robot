@@ -9,3 +9,13 @@ log/
 # 忽略 Python 缓存
 __pycache__/
 *.pyc
+# Local environments and generated caches
+.env
+.env.*
+.venv/
+venv/
+*.py[cod]
+.pytest_cache/
+.idea/
+.DS_Store
+Thumbs.db
